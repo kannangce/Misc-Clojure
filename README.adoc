@@ -1,2 +1,3 @@
 # Misc-Clojure
+
 Contains random clojure practicing snippets.  Not meant to be organized as a project but just a collection of clj snippets.
