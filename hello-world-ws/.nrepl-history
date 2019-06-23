@@ -1,0 +1,11 @@
+(require :reload 'hello)
+(require :reload 'test)
+(require '[io.pedestal.http.route :as route])
+(route/try-routing-for hello/routes :prefix-tree "/greet" :get)
+(route/try-routing-for test/routes :prefix-tree "/greet" :get)
+(route/try-routing-for test/routes :prefix-tree "/greet" :post)
+(route/try-routing-for hello/routes :prefix-tree "/greet" :post)
+(route/try-routing-for hello/routes :prefix-tree "/greet" :put)
+hello/respond-hello
+(hello/respond-hello {})
+(hello/start)
