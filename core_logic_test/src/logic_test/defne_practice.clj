@@ -2,6 +2,7 @@
 (use 'clojure.core.logic)
 
 (defn lefto1
+  "Finds out [x y] such that x is in left relative to y in the give vector l"
   [x y l]
   (conde
     [(fresh [d]
