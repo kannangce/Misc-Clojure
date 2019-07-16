@@ -10,8 +10,8 @@
 
 ;; To execute this 
 ;; - Checkout this project.
-;; - From core_logic_test folder run boot repl(assuming you already have boot)
-;; - In repl type (require 'logic-test.sudoku)
+;; - From core_logic_test folder run boot repl(assuming you already have boot-clj)
+;; - In repl type (use 'logic-test.sudoku)
 ;; - Run (sudokufd hints) to get the o/p for any hints vector
 
 (defn get-square [rows x y]
