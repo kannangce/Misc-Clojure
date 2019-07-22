@@ -1,3 +1,8 @@
+(ns n-queens.sudoku
+  (:refer-clojure :exclude [==]) ;; Exclude clojure default == so that we'll use it from core.logic
+  (:use clojure.core.logic)
+  (:require [clojure.core.logic.fd :as fd]))
+
 (defn down
  [[x y]]
  [(inc x) y])
