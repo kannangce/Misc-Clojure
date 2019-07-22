@@ -1,4 +1,4 @@
-(ns n-queens.sudoku
+(ns logic_test.n-queens
   (:refer-clojure :exclude [==]) ;; Exclude clojure default == so that we'll use it from core.logic
   (:use clojure.core.logic)
   (:require [clojure.core.logic.fd :as fd]))
