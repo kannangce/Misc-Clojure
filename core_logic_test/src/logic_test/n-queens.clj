@@ -5,19 +5,19 @@
 
 (defn down
  [[x y]]
- [(inc x) y])
+ [x (inc y)])
 
 (defn up
  [[x y]]
- [(dec x) y])
+ [x (dec y)])
 
 (defn right
  [[x y]]
- [x (inc y)])
+ [(inc x) y])
 
 (defn left
  [[x y]]
- [x (dec y)])
+ [(dec x) y])
 
 (defn down-right
  [[x y]]
