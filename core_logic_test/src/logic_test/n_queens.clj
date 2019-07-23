@@ -1,23 +1,23 @@
-(ns logic_test.n-queens
+(ns logic-test.n-queens
   (:refer-clojure :exclude [==]) ;; Exclude clojure default == so that we'll use it from core.logic
   (:use clojure.core.logic)
   (:require [clojure.core.logic.fd :as fd]))
 
 (defn down
  [[x y]]
- [x (inc y)])
+ [(inc x) y])
 
 (defn up
  [[x y]]
- [x (dec y)])
+ [(dec x) y])
 
 (defn right
  [[x y]]
- [(inc x) y])
+ [x (inc y)])
 
 (defn left
  [[x y]]
- [(dec x) y])
+ [x (dec y)])
 
 (defn down-right
  [[x y]]
@@ -72,42 +72,51 @@
 		  x-max (count coll)
 		  y-max (count (nth coll 0))]
 
+		(println x-max)
+		(println y-max)
+		(println point-fns)
+
 		(->> point-fns
 			(cons {:points (for [y (range y-max)] [0 y])
 			 		:fn down-left})
-			(cons {:points (for [x (range x-max)] [x y-max])
+			(cons {:points (for [x (range x-max)] [x (dec y-max)])
 			 		:fn down-left})
-			(cons {:points (for [y (range y-max)] [x-max y])
+			(cons {:points (for [y (range y-max)] [(dec x-max) y])
 			 		:fn up-left})
-			(cons {:points (for [x (range x-max)] [x y-max])
+			(cons {:points (for [x (range x-max)] [x (dec y-max)])
 			 		:fn up-left})
-			(#(println %))
 			(reduce 
 				(fn[accum param]
-					(println accum)
-					(into accum 
-						(map #((println (:fn param) "-" %1) (get-elem-along coll %1 (:fn param)))
-							(:points param))))
-				#{})
+				 (do (println accum)
+				 				(println param)
+									(into accum 
+										(map #(get-elem-along coll %1 (:fn param))
+											(:points param)))))
+									#{})
 			(filter not-empty))))
 
 (defn count-queens [coll]
   "Counts the queens in the given collection coll"
   (count (filter #(= :Q %) coll)))
   
- (let [n 4
-   sqrs (repeatedly (* n n) lvar)
-   rows (mapv #(identity (vec %)) (partition 4 sqrs))
-   cols (apply mapv vector rows)
-   diagnols (mapv #(get-diagonals rows %) (for [x (range n) y (range n)] [x y]))]
+(defn solve-n-queens
+ [n]
+ (let [sqrs (repeatedly (* n n) lvar)
+   				rows (mapv #(identity (vec %)) (partition n sqrs))
+   				cols (apply mapv vector rows)
+   				diagnols (get-all-diagonals rows)]
+
+				(println rows)
+				(println cols)
+				(println diagnols)
     (run 1 [q]
         (== q rows)
         (everyg #(membero % [:Q :_]) sqrs)
         (project [diagnols]
             (conde
             	[(== 1 (count-queens diagnols))]
-            	[(== 0 (count-queens diagnols))]))))
+            	[(== 0 (count-queens diagnols))]))
         (project [rows]
             (everyg #(== 1 (count-queens %)) rows))
         (project [cols]
-            (everyg #(== 1 (count-queens %)) cols))))
+            (everyg #(== 1 (count-queens %)) cols)))))
