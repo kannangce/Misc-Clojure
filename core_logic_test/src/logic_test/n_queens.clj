@@ -3,6 +3,18 @@
   (:use clojure.core.logic)
   (:require [clojure.core.logic.fd :as fd]))
 
+
+;; NOTE: FOR SOME REASON THIS DOESN'T WORK. 
+;; I'M ABLE TO GET THE ROWS AND COLS CONDITION WORKING.
+;; AND THE DIAGONAL CONDITION WORKING SEPARATELY.
+;; BUT NOT BOTH.
+
+;; All the below functions is meant to get the diagonals assuming the input is
+;; a n x n nested seq. Where each inner seq is a row.
+;; Hece for the second element from the first nested seq, you would denote
+;; it by [x y] position [1 2]
+
+;; Navigation functions
 (defn down
  [[x y]]
  [(inc x) y])
@@ -64,17 +76,12 @@
  				collected
  				(recur (step curr-pos) step (conj collected next-elem)))))))
 
-
 (defn get-all-diagonals
-	"Gets all the possible diagnols in the given collection"
+	"Gets all the possible diagonals in the given collection"
 	[coll]
 	(let [point-fns []
 		  x-max (count coll)
 		  y-max (count (nth coll 0))]
-
-		(println x-max)
-		(println y-max)
-		(println point-fns)
 
 		(->> point-fns
 			(cons {:points (for [y (range y-max)] [0 y])
@@ -100,23 +107,22 @@
   (count (filter #(= :Q %) coll)))
   
 (defn solve-n-queens
- [n]
- (let [sqrs (repeatedly (* n n) lvar)
-   				rows (mapv #(identity (vec %)) (partition n sqrs))
-   				cols (apply mapv vector rows)
-   				diagnols (get-all-diagonals rows)]
-
-				(println rows)
-				(println cols)
-				(println diagnols)
-    (run 1 [q]
+ "Solve the n-queens for the given number n and optional cnt.
+ If cnt not given it will taken as 1"
+ ([n cnt]
+ 	(let [sqrs (repeatedly (* n n) lvar) ;; Create a lvars for n x n grid
+   				rows (mapv #(identity (vec %)) (partition n sqrs)) ;; Create rows out of it
+   				cols (apply mapv vector rows) ;; Create cols out of it
+   				diagonals (get-all-diagonals rows)] ;; Get all the possible diagonals in the given nxn grid
+    (run cnt [q]
         (== q rows)
-        (everyg #(membero % [:Q :_]) sqrs)
-        (project [diagnols]
-            (conde
-            	[(everyg #(== 1 (count-queens %)) diagnols)]
-            	[(everyg #(== 0 (count-queens %)) diagnols)]))
-        (project [rows]
-            (everyg #(== 1 (count-queens %)) rows))
-        (project [cols]
-            (everyg #(== 1 (count-queens %)) cols)))))
+        (everyg #(membero % [:Q :_]) sqrs) ;; Each lvar in must be either :Q (queen) or :_ (nothing)
+        (project [rows cols diagonals]
+        				(everyg #(== 1 (count-queens %)) rows) ;; Every row must have atleast one queen
+        				(everyg #(== 1 (count-queens %)) cols) ;; Every column must have atleast one queen
+            (conde  ;; Every diagnol must have 0 or 1 Queen not more than that.
+            	[(everyg #(== 1 (count-queens %)) diagonals)]
+            	[(everyg #(== 0 (count-queens %)) diagonals)])
+            ))))
+ 		([n]
+ 				solve-n-queens[n 1]))
