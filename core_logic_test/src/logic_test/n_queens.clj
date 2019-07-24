@@ -93,7 +93,7 @@
 										(map #(get-elem-along coll %1 (:fn param))
 											(:points param)))))
 									#{})
-			(filter not-empty))))
+			(filter #(> (count %1) 1)))))
 
 (defn count-queens [coll]
   "Counts the queens in the given collection coll"
@@ -114,8 +114,8 @@
         (everyg #(membero % [:Q :_]) sqrs)
         (project [diagnols]
             (conde
-            	[(== 1 (count-queens diagnols))]
-            	[(== 0 (count-queens diagnols))]))
+            	[(everyg #(== 1 (count-queens %)) diagnols)]
+            	[(everyg #(== 0 (count-queens %)) diagnols)]))
         (project [rows]
             (everyg #(== 1 (count-queens %)) rows))
         (project [cols]
